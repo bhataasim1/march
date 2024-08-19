@@ -3,9 +3,9 @@
 import React, { createContext, useState, useEffect, useContext } from "react"
 
 import axios, { type AxiosError } from "axios"
+import Image from "next/image"
 
 import { BACKEND_URL } from "../lib/constants/urls"
-import Loader from "../lib/icons/Loader"
 import { getSession, clearSession } from "../lib/server/actions/sessions"
 
 interface AuthContextType {
@@ -80,8 +80,8 @@ export function AuthProvider({
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-white dark:bg-[#313131]">
-        <Loader />
+      <div className="flex h-screen w-screen items-center justify-center bg-white">
+        <Image src="/icons/ring-resize.svg" alt="logo" width={30} height={30} />
       </div>
     )
   }
