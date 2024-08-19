@@ -46,15 +46,11 @@ export function AuthProvider({
    */
   const googleLogin = async (code: string): Promise<void> => {
     try {
-      console.log(code)
-
-      const res = await axios.post(`${BACKEND_URL}/auth/google/login`, null, {
+      await axios.post(`${BACKEND_URL}/auth/google/login`, null, {
         headers: {
           "x-google-auth": `${code}`,
         },
       })
-
-      console.log(res)
     } catch (error) {
       const e = error as AxiosError
       if (e.response?.status === 401) {
