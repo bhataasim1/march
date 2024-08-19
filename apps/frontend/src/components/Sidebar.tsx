@@ -1,70 +1,94 @@
 "use client"
 import * as React from "react"
 
-import { Tray, Sun, Notepad, User, SignOut, Plus } from "@phosphor-icons/react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-import Button from "./atoms/Button"
 import { useAuth } from "../contexts/AuthContext"
+import Calender from "../lib/icons/Calender"
+import PencilEditIcon from "../lib/icons/Edit"
+import Gear from "../lib/icons/Gear"
+import Help from "../lib/icons/Help"
+import Inbox from "../lib/icons/Inbox"
+import Meet from "../lib/icons/Meet"
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
+import { BACKEND_URL } from "../lib/constants/urls"
+import { type User } from "../lib/@types/auth/user"
+import AddNote from "../lib/icons/AddNote"
 
 const navLinkClassName =
-  "flex items-center gap-2 rounded-lg px-3 py-2.5 hover-bg text-sm text-gray-color dark:text-zinc-400 cursor-pointer"
+  "flex items-center gap-2 rounded-lg px-3 py-2.5 hover-bg text-sm text-gray-color hover:text-black cursor-pointer"
 
-const pages = [
-  { title: "Notes", slug: "notes" },
-  { title: "Business", slug: "business" },
-  { title: "Personal", slug: "personal" },
-  { title: "Client", slug: "client" },
-  { title: "Meeting", slug: "meeting" },
-]
+const pages = [{ title: "Business", slug: "business" }]
 
 const Sidebar: React.FC = () => {
   const pathname = usePathname()
-  const { logout } = useAuth()
+  const { session, logout } = useAuth()
+
+  const { data, error, isFetched } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      try {
+        const { data } = await axios.get(`${BACKEND_URL}/users/me`, {
+          headers: {
+            Authorization: `Bearer ${session}`,
+          },
+        })
+        return data as User
+      } catch (error) {
+        return error
+      }
+    },
+  })
 
   if (pathname.includes("auth")) {
     return null
   } else {
     return (
-      <div className="flex w-[240px] flex-col gap-0.5 rounded-xl border border-button-stroke bg-[#dddddd] px-3 pb-3 pt-5 backdrop-blur-lg dark:border-white/10 dark:bg-white/10">
-        <div className="px-3 font-semibold dark:text-zinc-300">
-          March Satellite
-        </div>
-        <hr className="mb-3 mt-6 border-zinc-700/40" />
+      <div className="flex max-w-16 flex-col items-center justify-center rounded-xl bg-white px-4 pt-12 shadow-lg shadow-black/40">
         <Link className={navLinkClassName} href={"/app/inbox/"}>
-          <Tray size={14} weight="duotone" />
-          Inbox
+          <Inbox size={22} />
         </Link>
         <Link className={navLinkClassName} href={"/app/today/"}>
-          <Sun size={14} weight="duotone" />
-          Today
+          <Calender size={22} />
         </Link>
-        <hr className="my-3 border-zinc-700/40" />
-        <div className="mb-1 flex items-center justify-between pl-3">
-          <span className="text-sm font-medium text-zinc-300">Pages</span>
-          <Button variant={"invisible"} size={"icon"}>
-            <Plus size={14} weight="regular" />
-          </Button>
-        </div>
+        <div className="my-4 h-px w-full bg-gray-color" />
+        <Link className={navLinkClassName} href={`/app/page/notes`}>
+          <PencilEditIcon size={22} />
+        </Link>
+        <Link className={navLinkClassName} href={`/app/page/meeting`}>
+          <Meet size={22} />
+        </Link>
         {pages.map((page, index) => (
           <Link
             className={navLinkClassName}
             href={`/app/page/${page.slug}/`}
             key={index}
           >
-            <Notepad size={14} weight="duotone" />
-            {page.title}
+            <PencilEditIcon size={22} />
           </Link>
         ))}
-        <div className="mt-auto text-zinc-400">
-          <button onClick={logout} className={navLinkClassName + " w-full"}>
-            <SignOut size={14} weight="duotone" />
-            Logout
+        <button className={navLinkClassName}>
+          <AddNote size={22} />
+        </button>
+        <div className="mb-4 mt-auto flex flex-col items-center justify-center text-zinc-400">
+          <button className="grid size-10 place-items-center">
+            <Image
+              src={data ? data.avatar : "/user.jpg"}
+              alt="profile"
+              width={26}
+              height={26}
+              className="rounded-full bg-gray-color"
+            />
+          </button>
+          {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+          <button onClick={logout} className={navLinkClassName}>
+            <Gear size={22} />
           </button>
           <Link className={navLinkClassName} href={"/app/profile/"}>
-            <User size={14} weight="duotone" />
-            Profile
+            <Help size={22} />
           </Link>
         </div>
       </div>

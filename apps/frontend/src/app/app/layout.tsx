@@ -9,9 +9,9 @@ interface Props {
 
 const AppLayout: React.FC<Props> = ({ children }) => {
   return (
-    <AuthProvider> 
+    <AuthProvider>
       <QueryProvider>
-        <main className="flex h-screen gap-1 bg-white p-1">
+        <main className="flex h-screen gap-1 bg-light-bg p-1">
           <Sidebar />
           <section className="flex-1">{children}</section>
         </main>
