@@ -95,6 +95,7 @@ const config: Config = {
       colors: {
         "gray-color": "#676767",
         "button-stroke": "#D0D0D0",
+        "light-bg": "#FFFCE0",
       },
     },
     fontFamily: {
